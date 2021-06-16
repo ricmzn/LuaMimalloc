@@ -13,3 +13,5 @@
 * To enable the use of the custom allocator in missions, the mission environment also needs to be unsanitized on the server (edit `Program Files/Eagle Dynamics/DCS World Dedicated Server/Scripts/MissionScripting.lua`)
 
 * Note: paths are set up for x64 builds only
+
+* Note 2: the loader lua needs to start with Z to make sure it runs after Tacview, otherwise Tacview fails to load its own DLL (for unknown reasons)
