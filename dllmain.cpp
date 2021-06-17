@@ -17,8 +17,13 @@ static void* Alloc(void* ud, void* ptr, size_t osize, size_t nsize)
         if (osize > 0 && nsize > 0)
         {
             // Migrate the allocation to mimalloc
-            OriginalAlloc(OriginalAllocUserData, ptr, osize, 0);
-            return mi_malloc(nsize);
+            void* newp = mi_zalloc(nsize);
+            if (newp)
+            {
+                memcpy(newp, ptr, osize);
+                OriginalAlloc(OriginalAllocUserData, ptr, osize, 0);
+            }
+            return newp;
         }
         else
         {
@@ -34,7 +39,7 @@ static void* Alloc(void* ud, void* ptr, size_t osize, size_t nsize)
     {
         return mi_malloc(nsize);
     }
-    else
+    else 
     {
         return mi_realloc(ptr, nsize);
     }
