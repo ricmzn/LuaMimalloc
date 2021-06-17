@@ -14,4 +14,9 @@
 
 * Note: paths are set up for x64 builds only
 
-* Note 2: the loader lua needs to start with Z to make sure it runs after Tacview, otherwise Tacview fails to load its own DLL (for unknown reasons)
+## Known issues
+
+* The loader lua needs to start with Z to make sure it runs after Tacview, otherwise Tacview fails to load its own DLL for unknown reasons
+
+* This causes DCS to crash on exit while cleaning up
+
