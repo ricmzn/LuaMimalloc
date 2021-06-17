@@ -1,17 +1,17 @@
-local function log(str)
-    net.log(str)
+local function print(str)
+    log.write("LuaMimallocLoader", log.INFO, str)
 end
 
-log("Loading LuaMimalloc...")
+print("Loading LuaMimalloc...")
 package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/LuaMimalloc.dll"
 require("LuaMimalloc")
-log("LuaMimalloc.dll loaded")
+print("LuaMimalloc.dll loaded")
 
 local callbacks = {}
 function callbacks.onSimulationStart()
-    log("onSimulationStart")
+    print("onSimulationStart")
     if not DCS.isServer() then
-        log("Joining mission as client, not hooking LuaMimalloc")
+        print("Joining mission as client, not hooking LuaMimalloc")
         return nil
     end
     local res = net.dostring_in("server", [[
@@ -23,7 +23,7 @@ function callbacks.onSimulationStart()
         env.info("Loaded LuaMimalloc in mission")
     ]])
     if res ~= nil and res ~= '' then
-        log("Error while trying to hook LuaMimalloc in mission: "..tostring(res))
+        print("Error while trying to hook LuaMimalloc in mission: "..tostring(res))
     end
 end
 
