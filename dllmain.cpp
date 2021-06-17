@@ -1,3 +1,5 @@
+#include <windows.h>
+#include <memory.h>
 #include <mimalloc.h>
 extern "C"
 {
@@ -51,4 +53,19 @@ extern "C" __declspec(dllexport) int luaopen_LuaMimalloc(lua_State* L)
     OriginalAlloc = lua_getallocf(L, &OriginalAllocUserData);
     lua_setallocf(L, &Alloc, nullptr);
     return 0;
+}
+
+BOOL DllMain(HMODULE module, DWORD reason, void* reserved)
+{
+    switch (reason)
+    {
+        case DLL_PROCESS_ATTACH:
+            // Pin the DLL in memory so it's still loaded when Lua frees its memory
+            HMODULE mod;
+            GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCSTR)module, &mod);
+            break;
+        case DLL_PROCESS_DETACH:
+            break;
+    }
+    return TRUE;
 }
