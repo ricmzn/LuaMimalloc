@@ -45,9 +45,10 @@ static void* Alloc(void* ud, void* ptr, size_t osize, size_t nsize)
     }
 }
 
-extern "C" __declspec(dllexport) void luaopen_LuaMimalloc(lua_State* L)
+extern "C" __declspec(dllexport) int luaopen_LuaMimalloc(lua_State* L)
 {
     // Save the original allocator, because previous allocations have to be handled by it
     OriginalAlloc = lua_getallocf(L, &OriginalAllocUserData);
     lua_setallocf(L, &Alloc, nullptr);
+    return 0;
 }
