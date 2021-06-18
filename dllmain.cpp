@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <memory.h>
+#include <math.h>
 #include <mimalloc.h>
 extern "C"
 {
@@ -9,41 +10,41 @@ extern "C"
 static lua_Alloc OriginalAlloc = nullptr;
 static void* OriginalAllocUserData = nullptr;
 
-/// osize == 0 && nsize > 0: malloc
-/// osize > 0 && nsize == 0: free
-/// osize > 0 && nsize > 0: realloc
-static void* Alloc(void* ud, void* ptr, size_t osize, size_t nsize)
+/// oldSize == 0 && newSize > 0: malloc
+/// oldSize > 0 && newSize == 0: free
+/// oldSize > 0 && newSize > 0: realloc
+static void* Alloc(void* unused, void* ptr, size_t oldSize, size_t newSize)
 {
     if (ptr && !mi_is_in_heap_region(ptr))
     {
-        if (osize > 0 && nsize > 0)
+        if (oldSize > 0 && newSize > 0)
         {
             // Migrate the allocation to mimalloc
-            void* newp = mi_zalloc(nsize);
-            if (newp)
+            void* newPtr = mi_malloc(newSize);
+            if (newPtr)
             {
-                memcpy(newp, ptr, osize);
-                OriginalAlloc(OriginalAllocUserData, ptr, osize, 0);
+                memcpy(newPtr, ptr, min(oldSize, newSize));
+                OriginalAlloc(OriginalAllocUserData, ptr, oldSize, 0);
             }
-            return newp;
+            return newPtr;
         }
         else
         {
-            return OriginalAlloc(OriginalAllocUserData, ptr, osize, nsize);
+            return OriginalAlloc(OriginalAllocUserData, ptr, oldSize, newSize);
         }
     }
-    if (nsize == 0)
+    if (newSize == 0)
     {
         mi_free(ptr);
         return nullptr;
     }
-    else if (osize == 0)
+    else if (oldSize == 0)
     {
-        return mi_malloc(nsize);
+        return mi_malloc(newSize);
     }
-    else 
+    else
     {
-        return mi_realloc(ptr, nsize);
+        return mi_realloc(ptr, newSize);
     }
 }
 
