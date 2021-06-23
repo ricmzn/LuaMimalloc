@@ -16,7 +16,7 @@ function callbacks.onSimulationStart()
     end
     local res = net.dostring_in("server", [[
         if require == nil then
-            err("Cannot load LuaMimalloc because Lua environment is sanitized (`require` is nil)")
+            error("Cannot load LuaMimalloc because Lua environment is sanitized (`require` is nil)")
         end
         package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/LuaMimalloc.dll"
         require("LuaMimalloc")
