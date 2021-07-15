@@ -3,7 +3,7 @@ local function print(str)
 end
 
 print("Loading LuaMimalloc...")
-package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/LuaMimalloc.dll"
+package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/?.dll"
 require("LuaMimalloc")
 print("LuaMimalloc.dll loaded")
 
@@ -18,7 +18,7 @@ function callbacks.onSimulationStart()
         if require == nil then
             error("Cannot load LuaMimalloc because Lua environment is sanitized (`require` is nil)")
         end
-        package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/LuaMimalloc.dll"
+        package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/?.dll"
         require("LuaMimalloc")
         env.info("Loaded LuaMimalloc in mission")
     ]])
