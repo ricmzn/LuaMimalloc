@@ -12,7 +12,18 @@
 
 * To enable the use of the custom allocator in missions, the mission environment also needs to be unsanitized on the server (edit `Program Files/Eagle Dynamics/DCS World Dedicated Server/Scripts/MissionScripting.lua`)
 
-* Note: paths are set up for x64 builds only
+* Optional: enable the allocator in Export scripts by adding the following to the start of `Saved Games/Scripts/Export.lua`:
+```lua
+xpcall(function()
+    package.cpath = package.cpath..";"..lfs.writedir().."/Scripts/Hooks/?.dll"
+    require("LuaMimalloc")
+    log.write("Export.lua", log.INFO, "LuaMimalloc.dll loaded")
+end, function(err)
+    log.write("Export.lua", log.ERROR, "Failed to load LuaMimalloc.dll: "..tostring(err))
+end)
+```
+
+Note: build paths are set up for x64 only
 
 ## Known issues
 
